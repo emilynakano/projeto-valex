@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import dayjs from 'dayjs';
 
 import { findByTypeAndEmployeeId, TransactionTypes } from "../repositories/cardRepository";
 import { findByApiKey } from "../repositories/companyRepository";
@@ -25,5 +26,9 @@ export async function createCard (
     const cardCVC = faker.finance.creditCardCVV() 
     
     const employeeholderName = abreviateMiddleName(employee.fullName)
+
+    const now = dayjs();
+    const expirationDate = now.add(4, 'year').format('MM/YY');
+
     console.log(employeeholderName)
 }
