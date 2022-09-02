@@ -49,9 +49,23 @@ export async function ativateCard(
     securityCode:string, 
     password: string
     ) {
-    
-    const card = await cardRepository.findById(id);
 
+    const card = await cardRepository.findById(id);
+    
+    const CVCisValid = decryptSecurityCode(securityCode, card.securityCode);
+    
+    if(!CVCisValid) {
+        throw errorMiddleware.unauthorizedError('security code');
+    }
     if(!card) throw errorMiddleware.notFoundError('card');
     if(card.password) throw errorMiddleware.conflictError('password');
+
+}
+function decryptSecurityCode (securityCode: string, cryptedSecurityCode: string): boolean {
+    const cryptr = new Cryptr('SecretKey');
+
+    const securityCodeDescrypted = cryptr.decrypt(cryptedSecurityCode);
+
+    if(securityCodeDescrypted !== securityCode) return false
+    else return true
 }
