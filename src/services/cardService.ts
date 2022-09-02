@@ -25,5 +25,5 @@ export async function createCard (
     const cardCVC = faker.finance.creditCardCVV() 
     
     const employeeholderName = abreviateMiddleName(employee.fullName)
-    
+    console.log(employeeholderName)
 }
