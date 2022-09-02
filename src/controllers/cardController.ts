@@ -13,6 +13,6 @@ export async function ativateCard(req: Request, res: Response) {
     const { employeeId, securityCode, password } = req.body;
     const { id }  = req.params;
 
-    cardService.ativateCard(Number(id), Number(employeeId), securityCode, password);
+    await cardService.ativateCard(Number(id), Number(employeeId), securityCode, password);
     res.status(200).send('card activated sucessfuly!')
 }
