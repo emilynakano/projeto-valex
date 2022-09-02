@@ -1,7 +1,7 @@
-import { TransactionTypes } from "../repositories/cardRepository";
+import { findByTypeAndEmployeeId, TransactionTypes } from "../repositories/cardRepository";
 import { findByApiKey } from "../repositories/companyRepository";
 import { findById } from "../repositories/employeeRepository";
-import { notFoundError, unauthorizedError } from "../middlewares/errorHandlingMiddleware";
+import { conflictError, notFoundError, unauthorizedError } from "../middlewares/errorHandlingMiddleware";
 
 export async function createCard (
     employeeId:number, 
@@ -14,5 +14,8 @@ export async function createCard (
     
     const employee = await findById(employeeId);
     if(!employee) throw notFoundError('employee');
+
+    const employeTypes = await findByTypeAndEmployeeId(type, employeeId)
+    if(employeTypes) throw conflictError('card type')
     
 }
