@@ -1,3 +1,5 @@
+import { faker } from '@faker-js/faker';
+
 import { findByTypeAndEmployeeId, TransactionTypes } from "../repositories/cardRepository";
 import { findByApiKey } from "../repositories/companyRepository";
 import { findById } from "../repositories/employeeRepository";
@@ -16,6 +18,9 @@ export async function createCard (
     if(!employee) throw notFoundError('employee');
 
     const employeTypes = await findByTypeAndEmployeeId(type, employeeId)
-    if(employeTypes) throw conflictError('card type')
+    if(employeTypes) throw conflictError('card type');
+
+    const cardNumber = faker.finance.creditCardNumber('63[7-9]#-####-####-###L');
+    const cardCVC = faker.finance.creditCardCVV() 
     
 }
