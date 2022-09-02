@@ -59,5 +59,8 @@ export async function ativateCard(
     if(!securityCodeValid) {
         throw errorMiddleware.unauthorizedError('security code');
     }
+    
+    const passwordHash = newCryptValue(password)
+    
 
 }

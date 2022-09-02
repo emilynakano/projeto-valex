@@ -9,12 +9,14 @@ const cryptr = new Cryptr(`${process.env.CRYPT_KEY}`);
 export function compareCrypt (value: string, cryptedValue: string): boolean {
 
     const descryptedValue = cryptr.decrypt(cryptedValue);
-    console.log(descryptedValue)
+    
     if(descryptedValue !== value) return false
     else return true
+
 }
 
 export function newCryptValue (value: string) {
 
-    return cryptr.encrypt(value)
+    return cryptr.encrypt(value);
+    
 }
