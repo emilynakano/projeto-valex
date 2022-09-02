@@ -4,6 +4,7 @@ import { findByTypeAndEmployeeId, TransactionTypes } from "../repositories/cardR
 import { findByApiKey } from "../repositories/companyRepository";
 import { findById } from "../repositories/employeeRepository";
 import { conflictError, notFoundError, unauthorizedError } from "../middlewares/errorHandlingMiddleware";
+import { abreviateMiddleName } from '../utils/cardUtilits';
 
 export async function createCard (
     employeeId:number, 
@@ -22,5 +23,7 @@ export async function createCard (
 
     const cardNumber = faker.finance.creditCardNumber('63[7-9]#-####-####-###L');
     const cardCVC = faker.finance.creditCardCVV() 
+    
+    const employeeholderName = abreviateMiddleName(employee.fullName)
     
 }
