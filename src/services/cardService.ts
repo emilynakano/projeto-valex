@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
-import Cryptr from 'cryptr';
 
 import * as cardRepository from "../repositories/cardRepository";
 import { findByApiKey } from "../repositories/companyRepository";
 import { findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
+import {compareCrypt, newCryptValue} from '../utils/encryptUtilits'
 
 export async function createCard (
     employeeId:number, 
@@ -23,10 +23,8 @@ export async function createCard (
     const employeTypes = await cardRepository.findByTypeAndEmployeeId(type, employeeId)
     if(employeTypes) throw errorMiddleware.conflictError('card type');
 
-    const cryptr = new Cryptr('SecretKey');
-
     const number = faker.finance.creditCardNumber('63[7-9]#-####-####-###L');
-    const securityCode = cryptr.encrypt(faker.finance.creditCardCVV());
+    const securityCode = newCryptValue(faker.finance.creditCardCVV());
     const cardholderName = abreviateMiddleName(employee.fullName)
     const expirationDate = dayjs().add(5, 'year').format('MM/YY');
 
@@ -40,7 +38,7 @@ export async function createCard (
         isBlocked: false,
         type,
     }
-
+    console.log(cardData)
     await cardRepository.insert(cardData)
 }
 export async function ativateCard(
@@ -51,21 +49,15 @@ export async function ativateCard(
     ) {
 
     const card = await cardRepository.findById(id);
-    
-    const CVCisValid = decryptSecurityCode(securityCode, card.securityCode);
-    
-    if(!CVCisValid) {
-        throw errorMiddleware.unauthorizedError('security code');
-    }
+    console.log(card)
+
     if(!card) throw errorMiddleware.notFoundError('card');
     if(card.password) throw errorMiddleware.conflictError('password');
 
-}
-function decryptSecurityCode (securityCode: string, cryptedSecurityCode: string): boolean {
-    const cryptr = new Cryptr('SecretKey');
+    const securityCodeValid = compareCrypt(securityCode, card.securityCode);
 
-    const securityCodeDescrypted = cryptr.decrypt(cryptedSecurityCode);
+    if(!securityCodeValid) {
+        throw errorMiddleware.unauthorizedError('security code');
+    }
 
-    if(securityCodeDescrypted !== securityCode) return false
-    else return true
 }
