@@ -1,7 +1,8 @@
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
+import Cryptr from 'cryptr';
 
-import { findByTypeAndEmployeeId, TransactionTypes } from "../repositories/cardRepository";
+import { findByTypeAndEmployeeId, insert, TransactionTypes } from "../repositories/cardRepository";
 import { findByApiKey } from "../repositories/companyRepository";
 import { findById } from "../repositories/employeeRepository";
 import { conflictError, notFoundError, unauthorizedError } from "../middlewares/errorHandlingMiddleware";
@@ -22,12 +23,23 @@ export async function createCard (
     const employeTypes = await findByTypeAndEmployeeId(type, employeeId)
     if(employeTypes) throw conflictError('card type');
 
-    const cardNumber = faker.finance.creditCardNumber('63[7-9]#-####-####-###L');
-    const cardCVC = faker.finance.creditCardCVV() 
+    const cryptr = new Cryptr('SecretKey');
+
+    const number = faker.finance.creditCardNumber('63[7-9]#-####-####-###L');
+    const securityCode = cryptr.encrypt(faker.finance.creditCardCVV());
+    const cardholderName = abreviateMiddleName(employee.fullName)
+    const expirationDate = dayjs().add(5, 'year').format('MM/YY');
+
+    const cardData = {
+        employeeId,
+        number,
+        cardholderName,
+        securityCode,
+        expirationDate,
+        isVirtual: false,
+        isBlocked: false,
+        type,
+    }
     
-    const employeeholderName = abreviateMiddleName(employee.fullName)
-
-    const now = dayjs();
-    const expirationDate = now.add(5, 'year').format('MM/YY');
-
+    await insert(cardData)
 }

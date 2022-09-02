@@ -11,10 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/cryptr": "^4.0.1",
     "@types/dotenv": "^8.2.0",
     "@types/joi": "^17.2.3",
     "@types/pg": "^8.6.5",
     "cors": "^2.8.5",
+    "cryptr": "^6.0.3",
     "dayjs": "^1.11.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
