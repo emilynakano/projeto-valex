@@ -28,7 +28,6 @@ export async function createCard (
     const employeeholderName = abreviateMiddleName(employee.fullName)
 
     const now = dayjs();
-    const expirationDate = now.add(4, 'year').format('MM/YY');
+    const expirationDate = now.add(5, 'year').format('MM/YY');
 
-    console.log(employeeholderName)
 }
