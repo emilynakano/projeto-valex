@@ -4,6 +4,10 @@ interface Error {
 	type: string, message: string | string[]
 }
 
+export function forbiddenError(action: string): Error {
+	return {type: 'error_forbbiden', message: `cannot ${action}`}
+}
+
 export function conflictError (entity: string): Error {
 	return { type: 'error_conflict' , message: `${entity} already exists!`}
 }

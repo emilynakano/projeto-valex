@@ -49,11 +49,9 @@ export async function ativateCard(
     securityCode:string, 
     password: string
     ) {
-    console.log(id)
-    const card = await cardRepository.findById(id)
+    
+    const card = await cardRepository.findById(id);
 
     if(!card) throw errorMiddleware.notFoundError('card');
-
-    
-    console.log(card)
+    if(card.password) throw errorMiddleware.conflictError('password');
 }
