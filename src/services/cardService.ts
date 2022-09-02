@@ -2,26 +2,26 @@ import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
 import Cryptr from 'cryptr';
 
-import { findByTypeAndEmployeeId, insert, TransactionTypes } from "../repositories/cardRepository";
+import * as cardRepository from "../repositories/cardRepository";
 import { findByApiKey } from "../repositories/companyRepository";
 import { findById } from "../repositories/employeeRepository";
-import { conflictError, notFoundError, unauthorizedError } from "../middlewares/errorHandlingMiddleware";
+import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
 
 export async function createCard (
     employeeId:number, 
-    type:TransactionTypes, 
+    type:cardRepository.TransactionTypes, 
     apiKey: any
 ) {
 
     const apiKeyValidation = await findByApiKey(apiKey);
-    if(!apiKeyValidation) throw notFoundError('company')
+    if(!apiKeyValidation) throw errorMiddleware.notFoundError('company')
     
     const employee = await findById(employeeId);
-    if(!employee) throw notFoundError('employee');
+    if(!employee) throw errorMiddleware.notFoundError('employee');
 
-    const employeTypes = await findByTypeAndEmployeeId(type, employeeId)
-    if(employeTypes) throw conflictError('card type');
+    const employeTypes = await cardRepository.findByTypeAndEmployeeId(type, employeeId)
+    if(employeTypes) throw errorMiddleware.conflictError('card type');
 
     const cryptr = new Cryptr('SecretKey');
 
@@ -40,6 +40,14 @@ export async function createCard (
         isBlocked: false,
         type,
     }
+
+    await cardRepository.insert(cardData)
+}
+export async function ativateCard(
+    id: number,
+    employeeId:number, 
+    securityCode:string, 
+    password: string
+    ) {
     
-    await insert(cardData)
 }
