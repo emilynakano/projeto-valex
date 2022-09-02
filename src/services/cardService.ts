@@ -10,7 +10,7 @@ export async function createCard (
 ) {
 
     const apiKeyValidation = await findByApiKey(apiKey);
-    if(!apiKeyValidation) throw unauthorizedError('apiKey')
+    if(!apiKeyValidation) throw notFoundError('company')
     
     const employee = await findById(employeeId);
     if(!employee) throw notFoundError('employee');
