@@ -5,5 +5,5 @@ import {cardSchema} from '../schemas/cardSchema'
 const cardRouter = Router();
 
 cardRouter.post('/card',schemaValidationMiddleware(cardSchema), createCard)
-
+                                                                                                                
 export default cardRouter

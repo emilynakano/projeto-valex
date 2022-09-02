@@ -8,7 +8,8 @@ export function schemaValidationMiddleware(schema: any) {
         const {error} = schema.validate(req.body, {abortEarly:false});
 
         if(error) {
-            throw unprocessableError(error)
+            const message:string[] = error.details.map((err: any) => err.message)
+            throw unprocessableError(message)
         }
 
         next()
