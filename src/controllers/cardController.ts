@@ -16,3 +16,10 @@ export async function ativateCard(req: Request, res: Response) {
     await cardService.activateCard(Number(id), Number(employeeId), securityCode, password);
     res.status(200).send('card activated sucessfuly!')
 }
+export async function blockCard(req: Request, res: Response) {
+    const { password } = req.body;
+    const { id }  = req.params;
+
+    await cardService.blockCard(Number(id), password)
+    res.status(203).send('card blocked sucessfuly!')
+}

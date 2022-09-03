@@ -61,9 +61,6 @@ export async function activateCard(
     if(!securityCodeValid) {
         throw errorMiddleware.unauthorizedError('security code');
     }
-    
-    //to use 'isBefore' is necessary generate a complete date
-    //to generate a dayjs type from a string is necessary 'customParseFormat'
 
     if(!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) {
         throw errorMiddleware.forbiddenError('activate card because expiration date')
@@ -72,4 +69,19 @@ export async function activateCard(
     const passwordHash = newCryptValue(password);
 
     await cardRepository.update(id, {password: passwordHash})
+}
+export async function blockCard(id: number, password: string) {
+
+    const card = await cardRepository.findById(id);
+
+    if(!card) throw errorMiddleware.notFoundError('card');
+    if(!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) throw errorMiddleware.forbiddenError('block card because expiration date');
+    if(card.isBlocked) throw errorMiddleware.forbiddenError('block card because it is already blocked');
+    if(!card.password) throw errorMiddleware.forbiddenError('block card because it is not activated yet')
+    
+    const passwordValidation = compareCrypt(password, card.password);
+    
+    if(!passwordValidation) throw errorMiddleware.unauthorizedError('password');
+
+    await cardRepository.update(id, {isBlocked: true})
 }
