@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import * as cardRepository from "../repositories/cardRepository";
 import { findByApiKey } from "../repositories/companyRepository";
@@ -7,10 +8,8 @@ import { findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
 import {compareCrypt, newCryptValue} from '../utils/encryptUtilits';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 dayjs.extend(customParseFormat)
-
 
 export async function createCard (
     employeeId:number, 
@@ -42,7 +41,7 @@ export async function createCard (
         isBlocked: false,
         type,
     }
-    console.log(cardData)
+    
     await cardRepository.insert(cardData)
 }
 export async function ativateCard(
@@ -71,5 +70,6 @@ export async function ativateCard(
     if(!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) {
         throw errorMiddleware.forbiddenError('activate card because expiration date')
     }
-    
+
+    await cardRepository.update(id, {password})
 }
