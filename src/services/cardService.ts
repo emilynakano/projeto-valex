@@ -21,6 +21,25 @@ function ensureEmployeeDontHaveThisCardType (employeTypes: {}) {
     if(employeTypes) throw errorMiddleware.conflictError('card type');
 }
 
+function ensureCardExists (card: {}) {
+    if(!card) throw errorMiddleware.notFoundError('card');
+}
+function ensureCardIsNotActivated (password: string | undefined) {
+    if(password) throw errorMiddleware.badRequestError('this card is already activated!')
+}
+function ensureSecurityCodeIsValid (reqSecurityCode: string, securityCode: string) {
+    const securityCodeValid = compareCrypt(reqSecurityCode, securityCode);
+
+    if(!securityCodeValid) {
+        throw errorMiddleware.unauthorizedError('security code');
+    }
+}
+function ensureCardIsNotExpired(expirationDate: string) {
+    if(!dayjs().isBefore(dayjs(expirationDate, 'MM/YY'), 'month')) {
+        throw errorMiddleware.badRequestError('this card is expired!')
+    }
+}
+
 export async function createCard (
     employeeId:number, 
     type:cardRepository.TransactionTypes, 
@@ -63,19 +82,11 @@ export async function activateCard(
 
     const card = await cardRepository.findById(id);
 
-    if(!card) throw errorMiddleware.notFoundError('card');
-    if(card.password) throw errorMiddleware.forbiddenError('activate card because it is already activated');
-
-    const securityCodeValid = compareCrypt(securityCode, card.securityCode);
-
-    if(!securityCodeValid) {
-        throw errorMiddleware.unauthorizedError('security code');
-    }
-
-    if(!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) {
-        throw errorMiddleware.forbiddenError('activate card because expiration date')
-    }
-
+    ensureCardExists(card);
+    ensureCardIsNotActivated(card.password);
+    ensureSecurityCodeIsValid(securityCode, card.securityCode);
+    ensureCardIsNotExpired(card.expirationDate);
+    
     const passwordHash = newCryptValue(password);
 
     await cardRepository.update(id, {password: passwordHash})
