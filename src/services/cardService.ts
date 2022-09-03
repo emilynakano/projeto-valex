@@ -44,7 +44,7 @@ export async function createCard (
     
     await cardRepository.insert(cardData)
 }
-export async function ativateCard(
+export async function activateCard(
     id: number,
     employeeId:number, 
     securityCode:string, 
@@ -62,8 +62,6 @@ export async function ativateCard(
         throw errorMiddleware.unauthorizedError('security code');
     }
     
-    const passwordHash = newCryptValue(password);
-    
     //to use 'isBefore' is necessary generate a complete date
     //to generate a dayjs type from a string is necessary 'customParseFormat'
 
@@ -71,5 +69,7 @@ export async function ativateCard(
         throw errorMiddleware.forbiddenError('activate card because expiration date')
     }
 
-    await cardRepository.update(id, {password})
+    const passwordHash = newCryptValue(password);
+
+    await cardRepository.update(id, {password: passwordHash})
 }
