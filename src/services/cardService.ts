@@ -6,7 +6,11 @@ import { findByApiKey } from "../repositories/companyRepository";
 import { findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
-import {compareCrypt, newCryptValue} from '../utils/encryptUtilits'
+import {compareCrypt, newCryptValue} from '../utils/encryptUtilits';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat)
+
 
 export async function createCard (
     employeeId:number, 
@@ -49,10 +53,9 @@ export async function ativateCard(
     ) {
 
     const card = await cardRepository.findById(id);
-    console.log(card)
 
     if(!card) throw errorMiddleware.notFoundError('card');
-    if(card.password) throw errorMiddleware.conflictError('password');
+    if(card.password) throw errorMiddleware.forbiddenError('activate card because it is already activated');
 
     const securityCodeValid = compareCrypt(securityCode, card.securityCode);
 
@@ -60,7 +63,13 @@ export async function ativateCard(
         throw errorMiddleware.unauthorizedError('security code');
     }
     
-    const passwordHash = newCryptValue(password)
+    const passwordHash = newCryptValue(password);
     
+    //to use 'isBefore' is necessary generate a complete date
+    //to generate a dayjs type from a string is necessary 'customParseFormat'
 
+    if(!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) {
+        throw errorMiddleware.forbiddenError('activate card because expiration date')
+    }
+    
 }
