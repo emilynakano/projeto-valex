@@ -3,13 +3,23 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import * as cardRepository from "../repositories/cardRepository";
-import { findByApiKey } from "../repositories/companyRepository";
-import { findById } from "../repositories/employeeRepository";
+import { Company, findByApiKey } from "../repositories/companyRepository";
+import { Employee, findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
 import {compareCrypt, newCryptValue} from '../utils/encryptUtilits';
 
-dayjs.extend(customParseFormat)
+dayjs.extend(customParseFormat);
+
+function ensureApiKeyExists (company: Company) {
+    if(!company) throw errorMiddleware.notFoundError('company')
+}
+function ensureEmployeeExists (employee: Employee) {
+    if(!employee) throw errorMiddleware.notFoundError('employee');
+}
+function ensureEmployeeDontHaveThisCardType (employeTypes: {}) {
+    if(employeTypes) throw errorMiddleware.conflictError('card type');
+}
 
 export async function createCard (
     employeeId:number, 
@@ -17,14 +27,14 @@ export async function createCard (
     apiKey: any
 ) {
 
-    const apiKeyValidation = await findByApiKey(apiKey);
-    if(!apiKeyValidation) throw errorMiddleware.notFoundError('company')
+    const company = await findByApiKey(apiKey);
+    ensureApiKeyExists(company)
     
     const employee = await findById(employeeId);
-    if(!employee) throw errorMiddleware.notFoundError('employee');
+    ensureEmployeeExists(employee)
 
     const employeTypes = await cardRepository.findByTypeAndEmployeeId(type, employeeId)
-    if(employeTypes) throw errorMiddleware.conflictError('card type');
+    ensureEmployeeDontHaveThisCardType(employeTypes)
 
     const number = faker.finance.creditCardNumber('63[7-9]#-####-####-###L');
     const securityCode = newCryptValue(faker.finance.creditCardCVV());
