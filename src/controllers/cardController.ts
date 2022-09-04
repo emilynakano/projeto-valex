@@ -50,3 +50,10 @@ export async function buy(req: Request, res: Response) {
     await cardService.buy(Number(id), Number(businessId), password, amount)
     res.status(200).send('item purchased successfully!');
 }
+
+export async function getBlanceAndTransaction(req: Request, res: Response) {
+    const { id } = req.params;
+
+    const card = await cardService.getBlanceAndTransaction(Number(id));
+    res.send(card).status(200);
+}

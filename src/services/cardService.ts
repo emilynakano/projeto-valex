@@ -216,3 +216,23 @@ export async function buy(
 
 }
 
+export async function getBlanceAndTransaction(id: number) {
+    
+    const card = await cardRepository.findById(id);
+
+    ensureCardExists(card);
+
+    const recharges = await rechargeRepository.findByCardId(id);
+    const transactions = await paymentRepository.findByCardId(id);
+
+    const balance = generateBalance(recharges, transactions);
+
+    const cardData = {
+        balance,
+        transactions,
+        recharges
+    }
+
+    return cardData
+}
+

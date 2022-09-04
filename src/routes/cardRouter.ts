@@ -44,5 +44,10 @@ cardRouter.post('/cards/:id/buy',
     schemaValidationMiddleware(cardSchemas.buySchema),
     cardController.buy
 );
+
+cardRouter.get('/cards/:id',
+    cardMiddleware.cardIdValidation,
+    cardController.getBlanceAndTransaction
+);
                                                                                                                 
 export default cardRouter
