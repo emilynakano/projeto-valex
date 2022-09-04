@@ -165,6 +165,7 @@ export async function buy(
     ensureCardExists(card);
     ensureCardIsActivated(card.password);
     ensureCardIsNotExpired(card.expirationDate);
-    ensureCardIsNotBlocked(card.isBlocked)
+    ensureCardIsNotBlocked(card.isBlocked);
+    ensurePasswordIsValid(password, card.password)
 }
 
