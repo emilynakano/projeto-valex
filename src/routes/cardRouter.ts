@@ -1,14 +1,42 @@
 import { Router } from 'express';
+
 import * as cardController from '../controllers/cardController';
+import * as cardSchemas from '../schemas/cardSchema'
+import * as cardMiddleware from '../middlewares/cardMiddleware';
+
 import { schemaValidationMiddleware } from '../middlewares/schemaValidationMiddleware';
-import {newCardSchema, activateCardSchema, passwordCardSchema, amountCardSchema} from '../schemas/cardSchema'
-import { apiKeyValidation, cardIdValidation } from '../middlewares/cardMiddleware';
+
 const cardRouter = Router();
 
-cardRouter.post('/cards', apiKeyValidation, schemaValidationMiddleware(newCardSchema), cardController.createCard);
-cardRouter.post('/cards/:id/activate' , cardIdValidation, schemaValidationMiddleware(activateCardSchema), cardController.ativateCard);
-cardRouter.post('/cards/:id/block', cardIdValidation, schemaValidationMiddleware(passwordCardSchema), cardController.blockCard);
-cardRouter.post('/cards/:id/unlock', cardIdValidation, schemaValidationMiddleware(passwordCardSchema), cardController.unlockCard);
-cardRouter.post('/cards/:id/recharge', apiKeyValidation, cardIdValidation, schemaValidationMiddleware(amountCardSchema) ,cardController.rechargeCard)
+cardRouter.post('/cards', 
+    cardMiddleware.apiKeyValidation, 
+    schemaValidationMiddleware(cardSchemas.newCardSchema), 
+    cardController.createCard
+);
+
+cardRouter.post('/cards/:id/activate', 
+    cardMiddleware.cardIdValidation, 
+    schemaValidationMiddleware(cardSchemas.activateCardSchema), 
+    cardController.ativateCard
+);
+
+cardRouter.post('/cards/:id/block', 
+    cardMiddleware.cardIdValidation, 
+    schemaValidationMiddleware(cardSchemas.passwordCardSchema), 
+    cardController.blockCard
+);
+
+cardRouter.post('/cards/:id/unlock', 
+    cardMiddleware.cardIdValidation, 
+    schemaValidationMiddleware(cardSchemas.passwordCardSchema), 
+    cardController.unlockCard
+);
+
+cardRouter.post('/cards/:id/recharge', 
+    cardMiddleware.apiKeyValidation, 
+    cardMiddleware.cardIdValidation, 
+    schemaValidationMiddleware(cardSchemas.amountCardSchema) ,
+    cardController.rechargeCard
+);
                                                                                                                 
 export default cardRouter
