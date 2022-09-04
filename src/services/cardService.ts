@@ -161,7 +161,8 @@ export async function buy(
     password: string, 
     amount: number
 ) {
-    
+    const card = await cardRepository.findById(id);
+    ensureCardExists(card);
    
     
 }
