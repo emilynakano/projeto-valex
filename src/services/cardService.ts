@@ -164,6 +164,7 @@ export async function buy(
     const card = await cardRepository.findById(id);
     ensureCardExists(card);
     ensureCardIsActivated(card.password);
-
+    ensureCardIsNotExpired(card.expirationDate);
+    
 }
 
