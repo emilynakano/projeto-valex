@@ -8,7 +8,8 @@ import { Employee, findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
 import {compareCrypt, newCryptValue} from '../utils/encryptUtilits';
-import * as rechargeRepository from '../repositories/rechargeRepository'
+import * as rechargeRepository from '../repositories/rechargeRepository';
+import * as businessRepository from '../repositories/businessRepository'
 
 dayjs.extend(customParseFormat);
 
@@ -57,6 +58,10 @@ function ensureCardIsNotBlocked (isBlocked: boolean) {
 function ensureCardIsBlocked (isBlocked: boolean) {
     if(!isBlocked) throw errorMiddleware.badRequestError('this card is not blocked');
 }
+function ensurebusinessExists (business: businessRepository.Business) {
+    if(!business) throw errorMiddleware.notFoundError('business');
+}
+
 
 export async function createCard (
     employeeId:number, 
@@ -161,11 +166,16 @@ export async function buy(
     password: string, 
     amount: number
 ) {
+
     const card = await cardRepository.findById(id);
+
     ensureCardExists(card);
     ensureCardIsActivated(card.password);
     ensureCardIsNotExpired(card.expirationDate);
     ensureCardIsNotBlocked(card.isBlocked);
-    ensurePasswordIsValid(password, card.password)
+    ensurePasswordIsValid(password, card.password);
+
+    const business = await businessRepository.findById(businessId)
+    ensurebusinessExists(business)
 }
 
