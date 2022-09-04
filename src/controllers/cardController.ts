@@ -57,3 +57,11 @@ export async function getBlanceAndTransaction(req: Request, res: Response) {
     const card = await cardService.getBlanceAndTransaction(Number(id));
     res.send(card).status(200);
 }
+
+export async function getCardsByEmployeeId(req: Request, res: Response) {
+    const { id } = req.params;
+
+    const cards = await cardService.getCardsByEmployeeId(Number(id));
+
+    res.send(cards).status(200);
+}

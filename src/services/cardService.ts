@@ -7,7 +7,7 @@ import { Company, findByApiKey } from "../repositories/companyRepository";
 import { Employee, findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
-import {compareCrypt, newCryptValue} from '../utils/encryptUtilits';
+import {compareCrypt, decryptValue, newCryptValue} from '../utils/encryptUtilits';
 import * as rechargeRepository from '../repositories/rechargeRepository';
 import * as businessRepository from '../repositories/businessRepository'
 import * as paymentRepository from '../repositories/paymentRepository'
@@ -233,6 +233,10 @@ export async function getBlanceAndTransaction(id: number) {
         recharges
     }
 
-    return cardData
+    return cardData;
+
 }
 
+export async function getCardsByEmployeeId(employeeId: number) {
+
+}
