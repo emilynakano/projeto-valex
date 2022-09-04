@@ -150,6 +150,6 @@ export async function rechargeCard(amount: number, cardId: number, apiKey: any) 
     ensureCardIsActivated(card.password);
     ensureCardIsNotExpired(card.expirationDate);
 
-    await rechargeRepository.insert({cardId, amount});
+    await rechargeRepository.insert({cardId, amount});  
     
 }

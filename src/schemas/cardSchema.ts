@@ -22,4 +22,13 @@ export const activateCardSchema = joi.object({
         .messages({
         'string.pattern.base': '"password" must be a numeric string',
     })
-})
+});
+
+export const passwordCardSchema = joi.object({
+    password: joi.string()
+        .regex(/^[0-9]*$/)
+        .length(4)
+        .messages({
+    'string.pattern.base': '"password" must be a numeric string',
+    })
+});
