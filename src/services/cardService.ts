@@ -238,5 +238,9 @@ export async function getBlanceAndTransaction(id: number) {
 }
 
 export async function getCardsByEmployeeId(employeeId: number) {
-
+    const cards = await cardRepository.findByEmployeeId(employeeId);
+    
+    cards.forEach((card) => card.securityCode = decryptValue(card.securityCode));
+    
+    return cards
 }
