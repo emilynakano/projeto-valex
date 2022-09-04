@@ -32,3 +32,7 @@ export const passwordCardSchema = joi.object({
     'string.pattern.base': '"password" must be a numeric string',
     })
 });
+
+export const amountCardSchema = joi.object({
+    amount: joi.number().min(1).required()
+})
