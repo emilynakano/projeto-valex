@@ -53,6 +53,9 @@ function ensureCardIsNotExpired(expirationDate: string) {
 function ensureCardIsNotBlocked (isBlocked: boolean) {
     if(isBlocked) throw errorMiddleware.badRequestError('this card is already blocked');
 }
+function ensureCardIsBlocked (isBlocked: boolean) {
+    if(!isBlocked) throw errorMiddleware.badRequestError('this card is not blocked');
+}
 
 export async function createCard (
     employeeId:number, 
@@ -116,4 +119,16 @@ export async function blockCard(id: number, password: string) {
     ensurePasswordIsValid(password, card.password)
 
     await cardRepository.update(id, {isBlocked: true})
+}
+export async function unlockCard(id: number, password: string) {
+
+    const card = await cardRepository.findById(id);
+
+    ensureCardExists(card)
+    ensureCardIsNotExpired(card.expirationDate)
+    ensureCardIsBlocked(card.isBlocked)
+    ensureCardIsActivated(card.password)
+    ensurePasswordIsValid(password, card.password)
+
+    await cardRepository.update(id, {isBlocked: false})
 }

@@ -7,5 +7,6 @@ const cardRouter = Router();
 cardRouter.post('/cards',schemaValidationMiddleware(newCardSchema), cardController.createCard);
 cardRouter.post('/cards/:id/activate', schemaValidationMiddleware(activateCardSchema), cardController.ativateCard);
 cardRouter.post('/cards/:id/block', cardController.blockCard);
+cardRouter.post('/cards/:id/unlock', cardController.unlockCard);
                                                                                                                 
 export default cardRouter

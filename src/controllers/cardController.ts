@@ -21,5 +21,12 @@ export async function blockCard(req: Request, res: Response) {
     const { id }  = req.params;
 
     await cardService.blockCard(Number(id), password)
-    res.status(203).send('card blocked sucessfuly!')
+    res.status(200).send('card blocked sucessfuly!')
+}
+export async function unlockCard(req: Request, res: Response) {
+    const { password } = req.body;
+    const { id }  = req.params;
+
+    await cardService.unlockCard(Number(id), password)
+    res.status(200).send('card unlocked sucessfuly!')
 }
