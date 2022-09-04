@@ -49,10 +49,5 @@ cardRouter.get('/cards/:id',
     cardMiddleware.cardIdValidation,
     cardController.getBlanceAndTransaction
 );
-
-cardRouter.get('/cards/employee/:id',
-    cardMiddleware.cardIdValidation,
-    cardController.getCardsByEmployeeId
-)
                                                                                                                 
 export default cardRouter

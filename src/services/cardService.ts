@@ -236,15 +236,3 @@ export async function getBlanceAndTransaction(id: number) {
     return cardData;
 
 }
-
-export async function getCardsByEmployeeId(employeeId: number) {
-
-    const cards = await cardRepository.findByEmployeeId(employeeId);
-
-    ensureCardExists(cards[0]);
-    
-    cards.forEach((card) => card.securityCode = decryptValue(card.securityCode));
-    
-    return cards
-
-}
