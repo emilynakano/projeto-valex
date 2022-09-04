@@ -27,6 +27,9 @@ function ensureCardExists (card: {}) {
 function ensureCardIsNotActivated (password: string | undefined) {
     if(password) throw errorMiddleware.badRequestError('this card is already activated!')
 }
+function ensureCardIsActivated (password: string | undefined) {
+    if(!password) throw errorMiddleware.forbiddenError('block card because it is not activated yet')
+}
 function ensureSecurityCodeIsValid (reqSecurityCode: string, securityCode: string) {
     const securityCodeValid = compareCrypt(reqSecurityCode, securityCode);
 
@@ -34,10 +37,21 @@ function ensureSecurityCodeIsValid (reqSecurityCode: string, securityCode: strin
         throw errorMiddleware.unauthorizedError('security code');
     }
 }
+function ensurePasswordIsValid (reqPassword: string, password: string | undefined) {
+    if(!password) throw errorMiddleware.unauthorizedError('password'); 
+
+    const passwordValidation = compareCrypt(reqPassword, password);
+    
+    if(!passwordValidation) throw errorMiddleware.unauthorizedError('password');
+}
 function ensureCardIsNotExpired(expirationDate: string) {
     if(!dayjs().isBefore(dayjs(expirationDate, 'MM/YY'), 'month')) {
         throw errorMiddleware.badRequestError('this card is expired!')
     }
+}
+
+function ensureCardIsNotBlocked (isBlocked: boolean) {
+    if(isBlocked) throw errorMiddleware.badRequestError('this card is already blocked');
 }
 
 export async function createCard (
@@ -95,14 +109,11 @@ export async function blockCard(id: number, password: string) {
 
     const card = await cardRepository.findById(id);
 
-    if(!card) throw errorMiddleware.notFoundError('card');
-    if(!dayjs().isBefore(dayjs(card.expirationDate, 'MM/YY'), 'month')) throw errorMiddleware.forbiddenError('block card because expiration date');
-    if(card.isBlocked) throw errorMiddleware.forbiddenError('block card because it is already blocked');
-    if(!card.password) throw errorMiddleware.forbiddenError('block card because it is not activated yet')
-    
-    const passwordValidation = compareCrypt(password, card.password);
-    
-    if(!passwordValidation) throw errorMiddleware.unauthorizedError('password');
+    ensureCardExists(card)
+    ensureCardIsNotExpired(card.expirationDate)
+    ensureCardIsNotBlocked(card.isBlocked)
+    ensureCardIsActivated(card.password)
+    ensurePasswordIsValid(password, card.password)
 
     await cardRepository.update(id, {isBlocked: true})
 }

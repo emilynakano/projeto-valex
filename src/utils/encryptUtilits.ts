@@ -6,7 +6,7 @@ dotenv.config();
 
 const cryptr = new Cryptr(`${process.env.CRYPT_KEY}`);
 
-export function compareCrypt (value: string, cryptedValue: string): boolean {
+export function compareCrypt (value: string , cryptedValue: string): boolean {
 
     const descryptedValue = cryptr.decrypt(cryptedValue);
     console.log(descryptedValue)
