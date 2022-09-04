@@ -36,3 +36,11 @@ export const passwordCardSchema = joi.object({
 export const amountCardSchema = joi.object({
     amount: joi.number().min(1).required()
 })
+
+export const apiKeySchema = joi.object({
+    apiKey: joi.string().required()
+})
+
+export const cardIdSchema = joi.object({
+    id: joi.number().required()
+})

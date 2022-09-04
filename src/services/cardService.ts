@@ -142,10 +142,11 @@ export async function unlockCard(id: number, password: string) {
 }
 
 export async function rechargeCard(amount: number, cardId: number, apiKey: any) {
-    
+    console.log(apiKey)
     const card = await cardRepository.findById(cardId);
+    const company = await findByApiKey(apiKey);
 
-    ensureApiKeyExists(apiKey);
+    ensureApiKeyExists(company);
     ensureCardExists(card);
     ensureCardIsActivated(card.password);
     ensureCardIsNotExpired(card.expirationDate);
