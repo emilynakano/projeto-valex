@@ -65,7 +65,12 @@ function ensurebusinessExists (business: businessRepository.Business) {
 function ensureCardTypeIsEqualToBusinessType (cardType: string, businessType: string) {
     if(cardType !== businessType) throw errorMiddleware.badRequestError('type card is not the same business type!');
 }
+function ensureBalanceIsGreaterThanAmount (recharges: rechargeRepository.Recharge[], amount: number) {
+    let balance = 0;
+    recharges.forEach((recharge) => balance += recharge.amount)
+    if(amount > balance) throw errorMiddleware.badRequestError('amount is greater than the balance!')
 
+}
 export async function createCard (
     employeeId:number, 
     type:cardRepository.TransactionTypes, 
@@ -178,8 +183,13 @@ export async function buy(
     ensureCardIsNotBlocked(card.isBlocked);
     ensurePasswordIsValid(password, card.password);
 
-    const business = await businessRepository.findById(businessId)
-    ensurebusinessExists(business)
-    ensureCardTypeIsEqualToBusinessType(card.type, business.type)
+    const business = await businessRepository.findById(businessId);
+
+    ensurebusinessExists(business);
+    ensureCardTypeIsEqualToBusinessType(card.type, business.type);
+
+    const recharges = await rechargeRepository.findByCardId(id);
+    ensureBalanceIsGreaterThanAmount(recharges, amount)
+
 }
 
