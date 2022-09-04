@@ -58,10 +58,13 @@ function ensureCardIsNotBlocked (isBlocked: boolean) {
 function ensureCardIsBlocked (isBlocked: boolean) {
     if(!isBlocked) throw errorMiddleware.badRequestError('this card is not blocked');
 }
+
 function ensurebusinessExists (business: businessRepository.Business) {
     if(!business) throw errorMiddleware.notFoundError('business');
 }
-
+function ensureCardTypeIsEqualToBusinessType (cardType: string, businessType: string) {
+    if(cardType !== businessType) throw errorMiddleware.badRequestError('type card is not the same business type!');
+}
 
 export async function createCard (
     employeeId:number, 
@@ -177,5 +180,6 @@ export async function buy(
 
     const business = await businessRepository.findById(businessId)
     ensurebusinessExists(business)
+    ensureCardTypeIsEqualToBusinessType(card.type, business.type)
 }
 
