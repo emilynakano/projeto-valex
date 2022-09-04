@@ -10,6 +10,7 @@ import { abreviateMiddleName } from '../utils/cardUtilits';
 import {compareCrypt, newCryptValue} from '../utils/encryptUtilits';
 import * as rechargeRepository from '../repositories/rechargeRepository';
 import * as businessRepository from '../repositories/businessRepository'
+import * as paymentRepository from '../repositories/paymentRepository'
 
 dayjs.extend(customParseFormat);
 
@@ -65,11 +66,21 @@ function ensurebusinessExists (business: businessRepository.Business) {
 function ensureCardTypeIsEqualToBusinessType (cardType: string, businessType: string) {
     if(cardType !== businessType) throw errorMiddleware.badRequestError('type card is not the same business type!');
 }
-function ensureBalanceIsGreaterThanAmount (recharges: rechargeRepository.Recharge[], amount: number) {
-    let balance = 0;
-    recharges.forEach((recharge) => balance += recharge.amount)
+function ensureBalanceIsGreaterThanAmount (balance: number, amount: number) {
     if(amount > balance) throw errorMiddleware.badRequestError('amount is greater than the balance!')
+}
 
+function generateBalance(recharges: rechargeRepository.Recharge[], payments: paymentRepository.Payment[]) {
+
+    let balancePositive = 0;
+    recharges.forEach((recharge) => balancePositive += recharge.amount);
+
+    let balanceNegative = 0;
+    payments.forEach((payment) => balanceNegative += payment.amount);
+
+    const balance = balancePositive - balanceNegative;
+    
+    return balance
 }
 export async function createCard (
     employeeId:number, 
@@ -189,7 +200,19 @@ export async function buy(
     ensureCardTypeIsEqualToBusinessType(card.type, business.type);
 
     const recharges = await rechargeRepository.findByCardId(id);
-    ensureBalanceIsGreaterThanAmount(recharges, amount)
+    const payments = await paymentRepository.findByCardId(id);
+
+    const balance = generateBalance(recharges, payments)
+
+    ensureBalanceIsGreaterThanAmount(balance, amount);
+
+    const paymentData = {
+        cardId: id, 
+        businessId, 
+        amount
+    }
+
+    await paymentRepository.insert(paymentData);
 
 }
 
