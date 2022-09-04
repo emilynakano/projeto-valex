@@ -38,5 +38,11 @@ cardRouter.post('/cards/:id/recharge',
     schemaValidationMiddleware(cardSchemas.amountCardSchema) ,
     cardController.rechargeCard
 );
+
+cardRouter.post('/cards/:id/buy',  
+    cardMiddleware.cardIdValidation, 
+    schemaValidationMiddleware(cardSchemas.buySchema),
+    cardController.buy
+);
                                                                                                                 
 export default cardRouter

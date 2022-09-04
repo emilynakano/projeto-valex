@@ -142,7 +142,7 @@ export async function unlockCard(id: number, password: string) {
 }
 
 export async function rechargeCard(amount: number, cardId: number, apiKey: any) {
-    console.log(apiKey)
+   
     const card = await cardRepository.findById(cardId);
     const company = await findByApiKey(apiKey);
 
@@ -154,3 +154,15 @@ export async function rechargeCard(amount: number, cardId: number, apiKey: any) 
     await rechargeRepository.insert({cardId, amount});  
     
 }
+
+export async function buy(
+    id: number,
+    businessId: number, 
+    password: string, 
+    amount: number
+) {
+    
+   
+    
+}
+

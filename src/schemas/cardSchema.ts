@@ -1,5 +1,6 @@
 import joi from 'joi';
 
+
 export const newCardSchema = joi.object({
     employeeId: joi.number().required(),
     type: joi.string()
@@ -43,4 +44,15 @@ export const apiKeySchema = joi.object({
 
 export const cardIdSchema = joi.object({
     id: joi.number().required()
+})
+
+export const buySchema = joi.object({
+    password: joi.string()
+        .regex(/^[0-9]*$/)
+        .length(4)
+        .messages({
+        'string.pattern.base': '"password" must be a numeric string',
+    }), 
+    amount: joi.number().min(1).required(), 
+    businessId: joi.number().required()
 })
