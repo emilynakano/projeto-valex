@@ -52,7 +52,7 @@ function ensureCardIsNotExpired(expirationDate: string) {
 }
 
 function ensureCardIsNotBlocked (isBlocked: boolean) {
-    if(isBlocked) throw errorMiddleware.badRequestError('this card is already blocked');
+    if(isBlocked) throw errorMiddleware.badRequestError('this card is blocked');
 }
 function ensureCardIsBlocked (isBlocked: boolean) {
     if(!isBlocked) throw errorMiddleware.badRequestError('this card is not blocked');
@@ -165,6 +165,6 @@ export async function buy(
     ensureCardExists(card);
     ensureCardIsActivated(card.password);
     ensureCardIsNotExpired(card.expirationDate);
-    
+    ensureCardIsNotBlocked(card.isBlocked)
 }
 
