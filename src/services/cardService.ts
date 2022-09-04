@@ -8,6 +8,7 @@ import { Employee, findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
 import {compareCrypt, newCryptValue} from '../utils/encryptUtilits';
+import * as rechargeRepository from '../repositories/rechargeRepository'
 
 dayjs.extend(customParseFormat);
 
@@ -28,7 +29,7 @@ function ensureCardIsNotActivated (password: string | undefined) {
     if(password) throw errorMiddleware.badRequestError('this card is already activated!')
 }
 function ensureCardIsActivated (password: string | undefined) {
-    if(!password) throw errorMiddleware.forbiddenError('block card because it is not activated yet')
+    if(!password) throw errorMiddleware.badRequestError('this card is not activated!')
 }
 function ensureSecurityCodeIsValid (reqSecurityCode: string, securityCode: string) {
     const securityCodeValid = compareCrypt(reqSecurityCode, securityCode);
@@ -64,17 +65,17 @@ export async function createCard (
 ) {
 
     const company = await findByApiKey(apiKey);
-    ensureApiKeyExists(company)
+    ensureApiKeyExists(company);
     
     const employee = await findById(employeeId);
-    ensureEmployeeExists(employee)
+    ensureEmployeeExists(employee);
 
-    const employeTypes = await cardRepository.findByTypeAndEmployeeId(type, employeeId)
-    ensureEmployeeDontHaveThisCardType(employeTypes)
+    const employeTypes = await cardRepository.findByTypeAndEmployeeId(type, employeeId);
+    ensureEmployeeDontHaveThisCardType(employeTypes);
 
     const number = faker.finance.creditCardNumber('63[7-9]#-####-####-###L');
     const securityCode = newCryptValue(faker.finance.creditCardCVV());
-    const cardholderName = abreviateMiddleName(employee.fullName)
+    const cardholderName = abreviateMiddleName(employee.fullName);
     const expirationDate = dayjs().add(5, 'year').format('MM/YY');
 
     const cardData = {
@@ -88,8 +89,10 @@ export async function createCard (
         type,
     }
     
-    await cardRepository.insert(cardData)
+    await cardRepository.insert(cardData);
+
 }
+
 export async function activateCard(
     id: number,
     employeeId:number, 
@@ -106,29 +109,47 @@ export async function activateCard(
     
     const passwordHash = newCryptValue(password);
 
-    await cardRepository.update(id, {password: passwordHash})
+    await cardRepository.update(id, {password: passwordHash});
+
 }
+
 export async function blockCard(id: number, password: string) {
 
     const card = await cardRepository.findById(id);
 
-    ensureCardExists(card)
-    ensureCardIsNotExpired(card.expirationDate)
-    ensureCardIsNotBlocked(card.isBlocked)
-    ensureCardIsActivated(card.password)
-    ensurePasswordIsValid(password, card.password)
+    ensureCardExists(card);
+    ensureCardIsNotExpired(card.expirationDate);
+    ensureCardIsNotBlocked(card.isBlocked);
+    ensureCardIsActivated(card.password);
+    ensurePasswordIsValid(password, card.password);
 
-    await cardRepository.update(id, {isBlocked: true})
+    await cardRepository.update(id, {isBlocked: true});
+
 }
+
 export async function unlockCard(id: number, password: string) {
 
     const card = await cardRepository.findById(id);
 
-    ensureCardExists(card)
-    ensureCardIsNotExpired(card.expirationDate)
-    ensureCardIsBlocked(card.isBlocked)
-    ensureCardIsActivated(card.password)
-    ensurePasswordIsValid(password, card.password)
+    ensureCardExists(card);
+    ensureCardIsNotExpired(card.expirationDate);
+    ensureCardIsBlocked(card.isBlocked);
+    ensureCardIsActivated(card.password);
+    ensurePasswordIsValid(password, card.password);
 
-    await cardRepository.update(id, {isBlocked: false})
+    await cardRepository.update(id, {isBlocked: false});
+
+}
+
+export async function rechargeCard(amount: number, cardId: number, apiKey: any) {
+    
+    const card = await cardRepository.findById(cardId);
+
+    ensureApiKeyExists(apiKey);
+    ensureCardExists(card);
+    ensureCardIsActivated(card.password);
+    ensureCardIsNotExpired(card.expirationDate);
+
+    await rechargeRepository.insert({cardId, amount});
+    
 }

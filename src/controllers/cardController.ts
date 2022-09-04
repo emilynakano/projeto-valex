@@ -30,3 +30,11 @@ export async function unlockCard(req: Request, res: Response) {
     await cardService.unlockCard(Number(id), password)
     res.status(200).send('card unlocked sucessfuly!')
 }
+export async function rechargeCard(req: Request, res: Response) {
+    const { id } = req.params;
+    const { 'x-api-key': apiKey } = req.headers;
+    const { amount } = req.body
+    
+    await cardService.rechargeCard(amount, Number(id), apiKey);
+    res.status(200).send('card recharged sucessfuly!');
+}

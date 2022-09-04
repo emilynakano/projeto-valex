@@ -8,5 +8,6 @@ cardRouter.post('/cards',schemaValidationMiddleware(newCardSchema), cardControll
 cardRouter.post('/cards/:id/activate', schemaValidationMiddleware(activateCardSchema), cardController.ativateCard);
 cardRouter.post('/cards/:id/block', cardController.blockCard);
 cardRouter.post('/cards/:id/unlock', cardController.unlockCard);
+cardRouter.post('/cards/:id/recharge', cardController.rechargeCard)
                                                                                                                 
 export default cardRouter
