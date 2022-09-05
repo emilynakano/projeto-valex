@@ -1,12 +1,6 @@
 import { connection } from "../config/database";
+import { Payment } from "../interfaces/paymentInterface";
 
-export interface Payment {
-  id: number;
-  cardId: number;
-  businessId: number;
-  timestamp: Date;
-  amount: number;
-}
 export type PaymentWithBusinessName = Payment & { businessName: string };
 export type PaymentInsertData = Omit<Payment, "id" | "timestamp">;
 

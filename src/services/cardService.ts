@@ -14,6 +14,7 @@ import * as paymentRepository from '../repositories/paymentRepository'
 import { Business } from '../interfaces/businessInterface';
 import { Company } from '../interfaces/companyInterfaces';
 import { Employee } from '../interfaces/employeeInterfaces';
+import { Payment } from '../interfaces/paymentInterface';
 
 dayjs.extend(customParseFormat);
 
@@ -73,7 +74,7 @@ function ensureBalanceIsGreaterThanAmount (balance: number, amount: number) {
     if(amount > balance) throw errorMiddleware.badRequestError('amount is greater than the balance!')
 }
 
-function generateBalance(recharges: rechargeRepository.Recharge[], payments: paymentRepository.Payment[]) {
+function generateBalance(recharges: rechargeRepository.Recharge[], payments: Payment[]) {
 
     let balancePositive = 0;
     recharges.forEach((recharge) => balancePositive += recharge.amount);
