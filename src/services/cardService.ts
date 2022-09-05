@@ -11,6 +11,7 @@ import {compareCrypt, decryptValue, newCryptValue} from '../utils/encryptUtilits
 import * as rechargeRepository from '../repositories/rechargeRepository';
 import * as businessRepository from '../repositories/businessRepository'
 import * as paymentRepository from '../repositories/paymentRepository'
+import { Business } from '../interfaces/businessInterface';
 
 dayjs.extend(customParseFormat);
 
@@ -60,7 +61,7 @@ function ensureCardIsBlocked (isBlocked: boolean) {
     if(!isBlocked) throw errorMiddleware.badRequestError('this card is not blocked');
 }
 
-function ensurebusinessExists (business: businessRepository.Business) {
+function ensurebusinessExists (business: Business) {
     if(!business) throw errorMiddleware.notFoundError('business');
 }
 function ensureCardTypeIsEqualToBusinessType (cardType: string, businessType: string) {
