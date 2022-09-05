@@ -1,11 +1,6 @@
 import { connection } from "../config/database";
+import { Recharge } from "../interfaces/rechargeInterface";
 
-export interface Recharge {
-  id: number;
-  cardId: number;
-  timestamp: Date;
-  amount: number;
-}
 export type RechargeInsertData = Omit<Recharge, "id" | "timestamp">;
 
 export async function findByCardId(cardId: number) {
