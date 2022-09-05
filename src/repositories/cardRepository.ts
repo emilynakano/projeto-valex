@@ -1,5 +1,6 @@
 import { connection } from "../config/database";
 import { mapObjectToUpdateQuery } from "../utils/sqlUtils";
+import { Card } from "../interfaces/cardInterfaces";
 
 export type TransactionTypes =
   | "groceries"
@@ -8,19 +9,7 @@ export type TransactionTypes =
   | "education"
   | "health";
 
-export interface Card {
-  id: number;
-  employeeId: number;
-  number: string;
-  cardholderName: string;
-  securityCode: string;
-  expirationDate: string;
-  password?: string;
-  isVirtual: boolean;
-  originalCardId?: number;
-  isBlocked: boolean;
-  type: TransactionTypes;
-}
+
 
 export type CardInsertData = Omit<Card, "id">;
 export type CardUpdateData = Partial<Card>;
