@@ -4,7 +4,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import * as cardRepository from "../repositories/cardRepository";
 import { findByApiKey } from "../repositories/companyRepository";
-import { Employee, findById } from "../repositories/employeeRepository";
+import { findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
 import {compareCrypt, decryptValue, newCryptValue} from '../utils/encryptUtilits';
@@ -13,6 +13,7 @@ import * as businessRepository from '../repositories/businessRepository'
 import * as paymentRepository from '../repositories/paymentRepository'
 import { Business } from '../interfaces/businessInterface';
 import { Company } from '../interfaces/companyInterfaces';
+import { Employee } from '../interfaces/employeeInterfaces';
 
 dayjs.extend(customParseFormat);
 

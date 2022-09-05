@@ -1,12 +1,5 @@
 import { connection } from "../config/database";
-
-export interface Employee {
-  id: number;
-  fullName: string;
-  cpf: string;
-  email: string;
-  companyId: number;
-}
+import { Employee } from "../interfaces/employeeInterfaces";
 
 export async function findById(id: number) {
   const result = await connection.query<Employee, [number]>(
