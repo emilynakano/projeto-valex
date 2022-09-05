@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 
 import * as cardService from '../services/cardService';
+import * as rechargeService from '../services/rechargeService';
+import * as paymentService from '../services/paymentsService';
+
 
 export async function createCard(req: Request, res: Response) {
     const { employeeId, type } = req.body;
@@ -39,7 +42,7 @@ export async function rechargeCard(req: Request, res: Response) {
     const { 'x-api-key': apiKey } = req.headers;
     const { amount } = req.body
     
-    await cardService.rechargeCard(amount, Number(id), apiKey);
+    await rechargeService.rechargeCard(amount, Number(id), apiKey);
     res.status(200).send('card recharged sucessfuly!');
 }
 
@@ -47,7 +50,7 @@ export async function buy(req: Request, res: Response) {
     const { id } = req.params;
     const { password, amount, businessId } = req.body
     
-    await cardService.buy(Number(id), Number(businessId), password, amount)
+    await paymentService.buy(Number(id), Number(businessId), password, amount)
     res.status(200).send('item purchased successfully!');
 }
 

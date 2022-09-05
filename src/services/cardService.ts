@@ -1,25 +1,20 @@
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { abreviateMiddleName } from '../utils/cardUtilits';
-import {compareCrypt, decryptValue, newCryptValue} from '../utils/encryptUtilits';
+import { newCryptValue } from '../utils/encryptUtilits';
 
 import * as cardRepository from "../repositories/cardRepository";
 import * as companyRepository from "../repositories/companyRepository";
 import * as employeeRepository from "../repositories/employeeRepository";
 import * as rechargeRepository from '../repositories/rechargeRepository';
-import * as businessRepository from '../repositories/businessRepository';
 import * as paymentRepository from '../repositories/paymentRepository';
 
 import { Payment } from '../interfaces/paymentInterface';
 import { Recharge } from '../interfaces/rechargeInterface';
+
 import * as validations from '../validations/cardValidations'
 
-dayjs.extend(customParseFormat);
-
-
-
-function generateBalance(recharges: Recharge[], payments: Payment[]) {
+export function generateBalance(recharges: Recharge[], payments: Payment[]) {
 
     let balancePositive = 0;
     recharges.forEach((recharge) => balancePositive += recharge.amount);
@@ -31,6 +26,7 @@ function generateBalance(recharges: Recharge[], payments: Payment[]) {
     
     return balance
 }
+
 export async function createCard (
     employeeId:number, 
     type:cardRepository.TransactionTypes, 
@@ -111,57 +107,6 @@ export async function unlockCard(id: number, password: string) {
     validations.ensurePasswordIsValid(password, card.password);
 
     await cardRepository.update(id, {isBlocked: false});
-
-}
-
-export async function rechargeCard(amount: number, cardId: number, apiKey: any) {
-   
-    const card = await cardRepository.findById(cardId);
-    const company = await companyRepository.findByApiKey(apiKey);
-
-    validations.ensureApiKeyExists(company);
-    validations.ensureCardExists(card);
-    validations.ensureCardIsActivated(card.password);
-    validations.ensureCardIsNotExpired(card.expirationDate);
-
-    await rechargeRepository.insert({cardId, amount});  
-    
-}
-
-export async function buy(
-    id: number,
-    businessId: number, 
-    password: string, 
-    amount: number
-) {
-
-    const card = await cardRepository.findById(id);
-
-    validations.ensureCardExists(card);
-    validations.ensureCardIsActivated(card.password);
-    validations.ensureCardIsNotExpired(card.expirationDate);
-    validations.ensureCardIsNotBlocked(card.isBlocked);
-    validations.ensurePasswordIsValid(password, card.password);
-
-    const business = await businessRepository.findById(businessId);
-
-    validations.ensurebusinessExists(business);
-    validations.ensureCardTypeIsEqualToBusinessType(card.type, business.type);
-
-    const recharges = await rechargeRepository.findByCardId(id);
-    const payments = await paymentRepository.findByCardId(id);
-
-    const balance = generateBalance(recharges, payments)
-
-    validations.ensureBalanceIsGreaterThanAmount(balance, amount);
-
-    const paymentData = {
-        cardId: id, 
-        businessId, 
-        amount
-    }
-
-    await paymentRepository.insert(paymentData);
 
 }
 
