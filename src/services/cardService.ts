@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import * as cardRepository from "../repositories/cardRepository";
-import { Company, findByApiKey } from "../repositories/companyRepository";
+import { findByApiKey } from "../repositories/companyRepository";
 import { Employee, findById } from "../repositories/employeeRepository";
 import * as errorMiddleware from "../middlewares/errorHandlingMiddleware";
 import { abreviateMiddleName } from '../utils/cardUtilits';
@@ -12,6 +12,7 @@ import * as rechargeRepository from '../repositories/rechargeRepository';
 import * as businessRepository from '../repositories/businessRepository'
 import * as paymentRepository from '../repositories/paymentRepository'
 import { Business } from '../interfaces/businessInterface';
+import { Company } from '../interfaces/companyInterfaces';
 
 dayjs.extend(customParseFormat);
 
