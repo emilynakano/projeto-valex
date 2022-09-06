@@ -8,9 +8,7 @@ A benefit card API, which is responsible for creating, recharging, activating, a
 
 - ### Technologies
 <div>
-  <img style='margin: 5px;' src="https://img.shields.io/badge/node js%20-%2320232a.svg?&style=for-the-badge&color=339933&logo=node.js&logoColor=ffffff"/>
-  <img style='margin: 5px;' src="https://img.shields.io/badge/Express%20-%2320232a.svg?&style=for-the-badge&color=000000&logo=Express&logoColor=ffffff"/>
-  <img style='margin: 5px;' src="https://img.shields.io/badge/PostgreSQL%20-%2320232a.svg?&style=for-the-badge&color=4169E1&logo=PostgreSQL&logoColor=ffffff"/>
+  <img src="https://skillicons.dev/icons?i=ts,express,postgres,nodejs" />
 </div>
 
 
